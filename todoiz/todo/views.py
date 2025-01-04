@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import  RecordRow,  TaskDone, PDFDocument
+from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile
 from django.utils import timezone
 from datetime import datetime
 from django.contrib import messages
@@ -211,3 +211,37 @@ def dashboard_view(request):
         #'team_members': team_members,
     }
     return render(request, 'todo/dashboard.html', context)
+
+
+def login_view(request):
+    user = None  # Initialize user variable
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')  # Or any other page after login
+
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')  # Stay on the login page
+
+    return render(request, 'todo/login.html')
+
+
+
+from .models import UserProfile
+
+@login_required
+def update_profile_picture(request):
+    if request.method == 'POST' and request.FILES.get('profile_picture'):
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        user_profile.profile_picture = request.FILES['profile_picture']
+        user_profile.save()
+        return redirect('dashboard')
+    return render(request, 'todo/user_profile.html')

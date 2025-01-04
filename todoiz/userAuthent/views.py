@@ -32,25 +32,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 
-def login_view(request):
-    user = None  # Initialize user variable
-
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        # Authenticate the user
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('dashboard')  # Or any other page after login
-        else:
-            messages.error(request, "Invalid username or password.")
-            return redirect('login')  # Stay on the login page
-
-    return render(request, 'todo/login.html')
-
 
 
 def register_view(request):

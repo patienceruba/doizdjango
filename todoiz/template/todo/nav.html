@@ -22,7 +22,11 @@
                 <p><small id="username-display"><a href="" id="uname">{{ user.username }}</a></small></p>
             </li>
             <li>
-                <a href=""><img src="{% static 'image/User-Account-Person-PNG-File.png' %}" width="30" height="30" alt="User Avatar"></a>
+                {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" width="30" height="30">
+                    {% else %}
+                    <img src="{% static 'image/User-Account-Person-PNG-File.png' %}" alt="Default Profile Picture" width="30" height="30">
+                    {% endif %}
             </li>
         </ul>
     </div>
