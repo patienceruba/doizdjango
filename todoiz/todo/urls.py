@@ -13,6 +13,6 @@ urlpatterns = [
    path('dashboard/', views.dashboard_view, name='dashboard'), 
     path('tasks/done/', views.task_done_view, name='task_done'),
     path('today', views.today_view, name="today"),
-     path('update-profile-picture/', views.update_profile_picture, name='update_profile_picture'),
+    path('update-profile-picture/', views.update_profile_picture, name='update_profile_picture'),
      
 ]

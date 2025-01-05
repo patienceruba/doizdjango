@@ -64,12 +64,31 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-
 class SubTask(models.Model):
     record = models.ForeignKey(RecordRow, related_name='subtasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
     done = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
+    comment = models.CharField(max_length=100)
+
+    def save(self, *args, **kwargs):
+        # Check if the subtask is being marked as done
+        was_done = self.done
+        super().save(*args, **kwargs)
+
+        # If a subtask was marked as done, check if all subtasks for the record are done
+        if self.done and not was_done:
+            self.record.update_progress()  # Update the progress based on subtasks
+            self.check_if_all_subtasks_done()  # Check if all subtasks are done
+
+    def check_if_all_subtasks_done(self):
+        # Check if all subtasks are done
+        if self.record.subtasks.filter(done=False).exists():
+            return  # Not all subtasks are done, do nothing
+
+        # If all subtasks are done, mark the parent task as done
+        self.record.done = True
+        self.record.save()
 
     def __str__(self):
         return f"{self.title} (Subtask of {self.record.title})"

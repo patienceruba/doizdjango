@@ -11,7 +11,7 @@
                 <a href="{% url 'add' %}" id="add-btn"><li><span class="material-symbols-outlined">add</span>Add Task</li></a>
                 <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
                 {% endif %}
-                <a href="" id="{% url 'today' %}"><li><span class="material-symbols-outlined">today</span>Today</li></a>
+                <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
                 <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
                 <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
                 <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
@@ -50,21 +50,38 @@
     <!-- Dashboard Statistics Section -->
         <section id="dashboard-section" class="section1">
             <div class="dashboard-container">
-                <div class="dashboard-item">
+                <a href="{% url 'event' %}">
+                    <div class="dashboard-item">
                     <h3>Total Tasks</h3>
                     <p>{{ total_tasks }}</p>
                 </div>
+                </a>
+                
                 <div class="dashboard-item">
-                    <h3>Tasks Completed</h3>
-                    <p>{{ tasks_completed }}</p>
-                </div>
+                        <a href="{% url 'task_done' %}">
+                        <h3>Tasks Completed</h3>
+                        <p>{{ tasks_completed }}</p>
+                        </a>
+                </div>                
                 <div class="dashboard-item">
+                    <a href="">
                     <h3>Upcoming Events</h3>
                     <p>{{ upcoming_events }}</p>
+                    </a>
                 </div>
+                
+                
                 <div class="dashboard-item">
+                    <a href="">
                     <h3>Team Members</h3>
                     <p>{{ team_members }}</p>
+                    </a>
+                </div>
+                <div class="dashboard-item">
+                    <a href="">
+                    <h3>Task in Progress</h3>
+                    <p>{{ team_members }}</p>
+                    </a>
                 </div>
             </div>
             
@@ -157,6 +174,11 @@
     text-align: center;
     flex: 1;
     margin: 0 10px;
+    transition: 0.5s ease;
+}
+.dashboard-item:hover{
+    background-color: grey;
+    width: 100px;
 }
 
 .dashboard-item h3 {
@@ -272,6 +294,8 @@ new Chart(taskPieChartCtx, {
     max-height: 200vh; /* Restrict height to viewport */
     overflow-y: auto;  /* Enable vertical scrolling */
 }
-
+a{
+    text-decoration: none;
+}
 </style>
 {% endblock %}
