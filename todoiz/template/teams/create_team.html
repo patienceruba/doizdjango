@@ -1,3 +1,4 @@
+
 {% extends "todo/main.html" %}
 {% load static %}
 {% block content %}
@@ -24,21 +25,12 @@
         <div class="add-tb">
             <h2>TODO List</h2>
             <div class="table">
-                <form method="POST" action="{% url 'add' %}" enctype="multipart/form-data">
+                <form method="POST" action="{% url 'create_team' %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="text" name="title" id="title" placeholder="Title....." maxlength="50" required>
-                    <textarea placeholder="Description..." id="message" name="description" required></textarea>
+                    <input type="text" name="team-name" id="team-name" placeholder="Title....." maxlength="50" required>
+                    <textarea placeholder="Team Description..." id="team-description" name="team-description" required></textarea>
                     <input type="file" name="image" accept="image/*" required id="image">
-                    <p id="start">
-                        <strong>Starting Date:</strong>
-                        <input type="date" name="starting-date" id="starting">
-                    </p>
-                    <p id="end">
-                        <strong>Ending Date:</strong>
-                        <input type="date" name="ending-date" id="ending">
-                    </p>
-                    <hr>
-                    <input type="submit" id="btn" name="save" value="Save">
+                    <input type="submit" id="btn" name="save" value="add">
                 </form>
             </div>
         </div>

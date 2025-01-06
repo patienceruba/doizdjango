@@ -1,7 +1,6 @@
 {% extends 'todo/main.html' %}
 {% load static %}
 {% block content %}
-
 <section class="wrapper">
     <div class="side-bar">
         <div class="profile">
@@ -12,56 +11,69 @@
                 <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
                 {% endif %}
                 <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
-                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
+                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Tasks</li></a>
                 <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-                <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
                 <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
                 <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
                 <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
             </ul>
         </div>
     </div>
-    <section id="dashboard-wrapper">
-    <!-- User Information Section -->
-        <section id="user-info-section" class="section1">
-            <div class="user-info-container">
-                <div class="user-profile">
-                    {% if user.userprofile.profile_picture %}
-                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" width="150" height="150">
-                    {% else %}
-                    <img src="{% static 'image/User-Account-Person-PNG-File.png' %}" alt="Default Profile Picture" width="150" height="150">
-                    {% endif %}
-                </div>
-                <div class="user-details">
-                    <h3>{{ user.get_full_name }}</h3>
-                    <p>Email: {{ user.email }}</p>
-                    <p>Username: {{ user.username }}</p>
-                     <!-- Change Profile Picture Form -->
-                    <form method="POST" enctype="multipart/form-data" action="{% url 'update_profile_picture' %}">
-                        {% csrf_token %}
-                        <label for="profile-picture">Change Profile Picture:</label>
-                        <input type="file" name="profile_picture" id="profile-picture" accept="image/*" required>
-                        <button type="submit" class="btn">Update</button>
-                    </form>
-                </div>
+    
+<section id="dashboard-wrapper">
+<!-- User Information Section -->
+    <section id="user-info-section" class="section1">
+        <div class="user-info-container">
+            <div class="user-profile">
+                {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" width="150" height="150">
+                {% else %}
+                <img src="{% static 'image/User-Account-Person-PNG-File.png' %}" alt="Default Profile Picture" width="150" height="150">
+                {% endif %}
             </div>
-        </section>
+            <div class="user-details">
+                <h3>{{ user.get_full_name }}</h3>
+                <p>Email: {{ user.email }}</p>
+                <p>Username: {{ user.username }}</p>
+                 <!-- Change Profile Picture Form -->
+                <form method="POST" enctype="multipart/form-data" action="{% url 'update_profile_picture' %}">
+                    {% csrf_token %}
+                    <label for="profile-picture">Change Profile Picture:</label>
+                    <input type="file" name="profile_picture" id="profile-picture" accept="image/*" required>
+                    <button type="submit" class="btn">Update</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-    <!-- Dashboard Statistics Section -->
+<!-- Dashboard Statistics Section -->
         <section id="dashboard-section" class="section1">
             <div class="dashboard-container">
-                <a href="{% url 'event' %}">
-                    <div class="dashboard-item">
-                    <h3>Total Tasks</h3>
-                    <p>{{ total_tasks }}</p>
+                <div class="dashboard-item">
+                        {% if total_tasks %}
+                        <a href="{% url 'event' %}">
+                            <h3>Total Tasks</h3>
+                            <p>{{ total_tasks }}</p>
+                        </a>
+                        {% else %}
+                        <h3>Tasks Completed</h3>
+                        <p>0</p>
+                        {% endif %}
                 </div>
-                </a>
+                
                 
                 <div class="dashboard-item">
-                        <a href="{% url 'task_done' %}">
-                        <h3>Tasks Completed</h3>
-                        <p>{{ tasks_completed }}</p>
-                        </a>
+                        {% if tasks_completed %}
+                            <a href="{% url 'task_done' %}">
+                                <h3>Tasks Completed</h3>
+                                <p>{{ tasks_completed }}</p>
+                            </a>
+                        {% else %}
+                            <h3>Tasks Completed</h3>
+                            <p>0</p>
+                        {% endif %}
+
                 </div>                
                 <div class="dashboard-item">
                     <a href="">
@@ -94,130 +106,16 @@
                     <canvas id="taskPieChart"></canvas>
                 </div>
             </div>
-            
-        </section>
-    <section class="footer">
+        <section class="footer">
             <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+        </section>
     </section>
 </section>
 
-<style>
-/* CSS for Dashboard */
-#dashboard-wrapper{
-    margin-top: 90px;
-    margin-bottom: 100px;
-}
-
-.side-bar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding: 15px;
-}
-
-.side-bar ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.side-bar ul a {
-    color: #ecf0f1;
-    text-decoration: none;
-    display: block;
-    
-}
-
-.side-bar ul a:hover {
-    background-color: #34495e;
-    padding-left: 10px;
-    border-radius: 5px;
-}
-
-#dashboard-wrapper {
-    flex: 1;
-    padding: 20px;
-    background-color: #ffffff;
-}
-
-#user-info-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.user-info-container {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
-.user-profile img {
-    border-radius: 50%;
-}
-
-.user-details h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #2c3e50;
-}
-
-.dashboard-container {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 30px;
-}
-
-.dashboard-item {
-    background-color: #ecf0f1;
-    border-radius: 5px;
-    padding: 15px;
-    text-align: center;
-    flex: 1;
-    margin: 0 10px;
-    transition: 0.5s ease;
-}
-.dashboard-item:hover{
-    background-color: grey;
-    width: 100px;
-}
-
-.dashboard-item h3 {
-    color: #34495e;
-    margin-bottom: 10px;
-}
-
-.chart-wrapper {
-    display: flex;
-    justify-content: space-around;
-}
-
-.chart-container {
-    width: 45%;
-    padding: 20px;
-    background-color: #ecf0f1;
-    border-radius: 5px;
-}
-
-.footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-}
-
-.footer p {
-    margin: 0;
-}
-
-</style>
 <script>
-    // Add any necessary JavaScript for interactive widgets or data updates here
-</script>
-<!-- Include Chart.js Library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  // dashboard.js
 
-<script>
-   // Bar Chart for Task Statistics
+// Bar Chart for Task Statistics
 const taskBarChartCtx = document.getElementById('taskBarChart').getContext('2d');
 new Chart(taskBarChartCtx, {
     type: 'bar',
@@ -263,39 +161,6 @@ new Chart(taskPieChartCtx, {
 });
 
 </script>
-<style>
-/* Styling for form */
-.user-details form {
-    margin-top: 10px;
-}
-
-.user-details input[type="file"] {
-    margin: 10px 0;
-}
-
-.user-details .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #007BFF;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.user-details .btn:hover {
-    background-color: #0056b3;
-}
-.wrapper {
-    display: flex;
-    
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
-    max-height: 200vh; /* Restrict height to viewport */
-    overflow-y: auto;  /* Enable vertical scrolling */
-}
-a{
-    text-decoration: none;
-}
-</style>
 {% endblock %}
+
+

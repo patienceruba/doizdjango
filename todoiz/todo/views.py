@@ -7,11 +7,8 @@ from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.contrib import messages
 from .models import UserProfile
 from django.contrib.auth.decorators import user_passes_test,login_required
-from django.contrib.auth.forms import PasswordResetForm
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -19,7 +16,6 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -28,9 +24,9 @@ from django.db.models.signals import post_save
 @login_required
 @user_passes_test(lambda user: user.is_staff)
 def home(request):
-	task = RecordRow.objects.all()
-	context = {"task":task}
-	return render(request, "todo/index.html", context)
+    task = RecordRow.objects.all()
+    context = {"task":task}
+    return render(request, "todo/index.html", context)
 
 @login_required
 @user_passes_test(lambda user: user.is_staff)
@@ -200,15 +196,14 @@ def today_view(request):
 
 
 def dashboard_view(request):
-    total_tasks = RecordRow.objects.count()
-    tasks_completed = RecordRow.objects.filter(done=True).count()
-    #upcoming_events = Task.objects.filter(start_date__gte=timezone.now()).count()  # Assuming tasks have a start date
-    #team_members = User.objects.count()  # Adjust if team members are stored differently
+    total_tasks = RecordRow.objects.filter(user=request.user).count()
+    task_done_list = TaskDone.objects.filter(user=request.user).order_by('-completed_at')
+    total_tasks_completed = task_done_list.count()  # Count completed tasks
+
     context = {
+        'task_done_list': task_done_list,
         'total_tasks': total_tasks,
-        'tasks_completed': tasks_completed,
-        #'upcoming_events': upcoming_events,
-        #'team_members': team_members,
+        'tasks_completed': total_tasks_completed  # Pass count to template
     }
     return render(request, 'todo/dashboard.html', context)
 

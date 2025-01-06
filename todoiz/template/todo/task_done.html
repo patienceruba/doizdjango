@@ -57,7 +57,10 @@
 
                             <p><strong>Description:</strong> {{ task.record.description }}</p>
                             <p><strong>Completed On:</strong> {{ task.completed_at|date:"F j, Y, g:i a" }}</p>
-                            <p><strong>Progress:</strong> 100%</p>
+                            <p><strong>Completed By:</strong> {{ task.user}}</p>
+                            <p><strong>Progress:</strong> 100% Done<span class="material-symbols-outlined">
+done_outline
+</span></p>
                         </li>
                     {% endfor %}
                 </ul>

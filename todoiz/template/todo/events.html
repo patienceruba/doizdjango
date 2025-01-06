@@ -12,9 +12,9 @@
                 <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
                 {% endif %}
                 <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
-                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
+                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Tasks</li></a>
                 <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-                <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
                 <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
                 <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
                 <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
@@ -23,86 +23,146 @@
     </div>
 
     <section class="content-wrapper">
-            <section id="view-section" class="section1">
-        <div class="content-container">
-            {% for contents in content %}
-                <div class="content-item">
-                    <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}"></a>
-                    <a href="">{{ contents.title }}</a>
-                </div>
-            {% empty %}
-                <p>No content available at the moment. Please check back later.</p>
-            {% endfor %}
-        </div>
+        <section id="view-section" class="section1">
+            <div class="content-container">
+                {% for contents in content %}
+                    <div class="content-item">
+                        <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}"></a>
+                        <a href="">{{ contents.title }}</a>
+                        <p>{{ contents.start_date }}</p>
+                        
+                        {% if contents.title in task_done_list %}
+                            <div id="enroll">
+                                <span>Already Enrolled</span>
+                            </div>
+                        {% else %}
+                            {% if contents.start_date and contents.start_date < now %}
+                                <div id="">
+                                    <span class="enroll-disabled">Enrollment Closed</span>
+                                </div>
+                            {% else %}
+                                <div id="enroll">
+                                    <a href="">Enroll</a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p>No content available at the moment. Please check back later.</p>
+                {% endfor %}
+            </div>
+
     </section>
+        <section class="footer">
+            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+        </section>
     </section>
 </section>
 
-<section class="footer">
-    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
-</section>
 
-<style type="text/css">
-    body{
-        background: white;
-    }
-    span {
-        cursor: pointer;
-    }
+<style type="text/css">/* General Styling for Content Section */
+.content-wrapper {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
 
+.content-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Styling for Content Items */
+.content-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.content-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for Images */
+.content-item img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+/* Styling for Titles */
+.content-item a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.content-item a:hover {
+    color: #0056b3;
+}
+
+/* Styling for Dates */
+.content-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Enrollment Section Styling */
+#enroll {
+    margin-top: 10px;
+}
+
+#enroll a {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+#enroll a:hover {
+    background-color: #218838;
+}
+
+.enroll-disabled {
+    color: red;
+    font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
     .content-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
-        gap: 20px; /* Space between grid items */
-        justify-items: center; /* Center items horizontally */
-        padding: 20px; /* Add padding around the grid */
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
     }
+}
 
-    .content-item {
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        text-align: center;
-        padding: 10px;
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+@media (max-width: 768px) {
+    .content-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
     }
+}
 
-    .content-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+@media (max-width: 480px) {
+    .content-container {
+        grid-template-columns: 1fr; /* Single column for very small screens */
     }
-
-    .content-item img {
-        display: block;
-        margin: 0 auto;
-        max-width: 100%;
-        border-radius: 10px;
-    }
-
-    a {
-        text-decoration: none;
-        color: #333;
-        font-weight: bold;
-    }
-
-    #view-section {
-        background: #fff;
-        overflow: hidden;
-        scroll-behavior: smooth;
-        width: 96.5%;
-    }
-
-    .footer {
-        text-align: center;
-        background: #333;
-        color: #fff;
-        padding: 10px 0;
-    }
-    .content-wrapper{
-        margin-top: 90px;
-    }
+}
 </style>
+
 
 {% endblock %}

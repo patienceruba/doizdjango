@@ -28,8 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'todo',
     'notifications',
-    "userAuthent"
- 
+    "userAuthent",
+    'teams',
 ]
 
 MIDDLEWARE = [

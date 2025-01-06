@@ -13,9 +13,8 @@
                 <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
                 <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
                 <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-                <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
                 <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
-                <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
                 <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
             </ul>
         </div>
@@ -40,81 +39,10 @@
             </div>
             <script src="calendar.js"></script>
         </section>
+        <section class="footer">
+            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+        </section>
     </section>
-    <section>
-        <span> <p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
-    </section>
-<style type="text/css">
-    #view-section{
-        margin-top: 89px;
-    }
-	#calendar {
-    margin: 20px auto;
-    width: 90%;
-    max-width: 500px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 10px 10px 0 0;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    padding: 10px;
-}
-
-.day-name {
-    text-align: center;
-    font-weight: bold;
-    color: #555;
-}
-
-.day {
-    text-align: center;
-    padding: 10px;
-    background: #f4f4f4;
-    border-radius: 4px;
-}
-
-.day:hover {
-    background: #007bff;
-    color: #fff;
-    cursor: pointer;
-}
-.day {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 40px;
-    margin: auto;
-    border-radius: 50%;
-    background-color: #f5f5f5;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.day:hover {
-    background-color: #ddd;
-}
-
-.highlight {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-</style>
 <script type="text/javascript">
 	const daysContainer = document.getElementById("days-container");
 const monthYear = document.getElementById("month-year");
@@ -221,4 +149,75 @@ renderCalendar(currentDate);
     renderCalendar(currentDate);
 
 </script>
+<style type="text/css">
+    #view-section{
+        margin-top: 89px;
+    }
+    #calendar {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 10px;
+}
+
+.day-name {
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+}
+
+.day {
+    text-align: center;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 4px;
+}
+
+.day:hover {
+    background: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+.day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    margin: auto;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.day:hover {
+    background-color: #ddd;
+}
+
+.highlight {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+</style>
 {% endblock %}

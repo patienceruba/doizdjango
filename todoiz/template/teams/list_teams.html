@@ -14,56 +14,60 @@
                 <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
                 <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
                 <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-                <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
-                <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calendar</li></a>               
-                <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>Logout</li></a>
+                <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
+                <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
+                <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
             </ul>
         </div>
     </div>
 
     <section class="content-wrapper">
         <section id="view-section" class="section1">
-            <div class="content-container">
-                {% if events_today %}
-                    <h2>Events for Today</h2>
-                    <ul>
-                        {% for event in events_today %}
-                            <li>
-                                <div class="content-item">
-                                    <a href=""><img src="{{ event.image.url }}" alt="{{ event.title }}"></a>
-                                    <a href="">{{ event.title }}</a>
-                                    <p>{{ event.description }}</p>
-                                    <p><strong>Time:</strong> {{ event.start_date|date:"D, M d, Y" }}</p>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No events for today.</p>
-                {% endif %}
-            </div>
-        </section>
-        <section class="footer">
-            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
-        </section>
+        <h1>Available Teams</h1>
+        <div>
+            {% if user.is_staff %}
+            <a href="{% url 'create_team' %}">Create Team</a>
+            {% for request in join_requests %}
+                <a href="{% url 'approve_request' pk=request.id %}">Approve</a>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div  class ="content-container">
+            <ul>
+             {% for team in teams %}
+                <div class="devs">
+                   
+                    <li>
+                        <h2>{{ team.name }}</h2><br> - {{ team.description }}
+                    </li>
+                    <div class="Join">
+                        <a href="{% url 'join_team_request' team.id %}">Request to Join</a>
+                    </div>
+                   <div id="delete">
+                        {% if user.is_staff %}
+                        <a href="{% url 'deleteteam' team.id%}">Delete</a>
+                        {% endif %}
+                   </div>
+                
+                </div>
+            {% endfor %}
+            </ul>
+        </div>
+    </section>
     </section>
 </section>
 
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if there are events for today
-        const eventsToday = {{ events_today|length }};
-        if (eventsToday > 0) {
-            alert('You have events scheduled for today!');
-        } else {
-            console.log('No events for today.');
-        }
-    });
-</script>
 <style type="text/css">
     /* Today's Events Section */
+    .content-wrapper{
+        width: 100%;
+        
+    }
 #view-section {
     padding: 20px;
     background-color: #f9f9f9;
@@ -94,6 +98,8 @@
     flex-direction: column;
     align-items: center;
     transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 200px;
+    max-height: 200px;
 }
 
 .content-container li:hover {
@@ -128,6 +134,16 @@
     margin: 5px 0;
     text-align: center;
 }
+.devs a{
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border-radius:  20px 0 20px 0;
+}
+.join{
+    margin-top: 40px;
+
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
@@ -149,5 +165,9 @@
 }
 
 </style>
-
+<style type="text/css">
+    #delete{
+        margin-top: 40px;
+    }
+</style>
 {% endblock %}

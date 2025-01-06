@@ -1,0 +1,13 @@
+<h1>Manage Join Requests for {{ team.name }}</h1>
+<ul>
+    {% for request in join_requests %}
+    <li>
+        {{ request.user.username }}: {{ request.message }}
+        <form method="post" action="{% url 'approve_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Approve</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+

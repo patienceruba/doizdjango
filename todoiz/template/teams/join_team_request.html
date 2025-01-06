@@ -1,0 +1,6 @@
+<h1>Request to Join {{ team.name }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="message" placeholder="Why do you want to join?"></textarea>
+    <button type="submit">Send Request</button>
+</form>
