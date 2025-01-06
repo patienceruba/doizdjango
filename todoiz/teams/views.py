@@ -104,9 +104,9 @@ def team_detail(request, team_id):
 
 
 def deleteTeam(request, pk):
-    item = get_object_or_404(Team, pk=pk)
+    team= get_object_or_404(Team, pk=pk)
     if request.method == "POST":
         item.delete()
         messages.success(request, "The team was deleted successfully.")
         return redirect("home")  # Replace "home" with the name of the view or URL to redirect to after deletion
-    return render(request, "teams/deleteteam.html", {"item": item})
+    return render(request, "teams/deleteteam.html", {"team": team})

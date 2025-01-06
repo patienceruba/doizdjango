@@ -5,6 +5,9 @@
 <section class="wrapper">
     <div class="side-bar">
         <div class="profile">
+            <div class="hide">
+                <span class="material-symbols-outlined">keyboard_backspace</span>
+            </div>
             <ul>
                 <a href="{% url 'dashboard' %}" id="profile-btn"><li><span class="material-symbols-outlined">dashboard_customize</span>Dashboard</li></a>
                 {% if user.is_staff %}
@@ -38,18 +41,22 @@
              {% for team in teams %}
                 <div class="devs">
                    
-                    <li>
-                        <h2>{{ team.name }}</h2><br> - {{ team.description }}
-                    </li>
-                    <div class="Join">
-                        <a href="{% url 'join_team_request' team.id %}">Request to Join</a>
-                    </div>
-                   <div id="delete">
-                        {% if user.is_staff %}
-                        <a href="{% url 'deleteteam' team.id%}">Delete</a>
-                        {% endif %}
-                   </div>
-                
+                        <div>
+                            <li>
+                                <img src="{{ team.image.url }}" alt="image" width="150" height="150">
+                                <p>{{ team.name }}</p>
+                                <p> {{ team.description }}</p>
+
+                            </li>
+                        </div>
+                        <div class="Join">
+                            <a href="{% url 'join_team_request' team.id %}">Request to Join</a>
+                        </div>
+                       <div id="delete">
+                            {% if user.is_staff %}
+                            <a href="{% url 'deleteteam' team.id%}">Delete</a>
+                            {% endif %}
+                       </div>
                 </div>
             {% endfor %}
             </ul>
@@ -169,5 +176,6 @@
     #delete{
         margin-top: 40px;
     }
+    
 </style>
 {% endblock %}
