@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Team, TeamMemberRequest, TeamMember
 from .forms import ApproveUserForm
+from django.http import JsonResponse
+
 @login_required
 def create_team(request):
     if request.method == "POST":
@@ -36,18 +38,15 @@ def create_team(request):
     return render(request, "teams/create_team.html")
 
 # Team Detail View
-@login_required
 def team_detail(request, team_id):
-    team = get_object_or_404(Team, id=team_id)
+    team = Team.objects.get(id=team_id)
+    join_requests = TeamMemberRequest.objects.filter(team=team, status='Pending')
+    
+    return render(request, 'teams/team_detail.html', {
+        'team': team,
+        'join_requests': join_requests
+    })
 
-    # Fetch all members, checking the `is_admin` field instead of `role`
-    team_members = TeamMember.objects.filter(team=team)
-
-    context = {
-        "team": team,
-        "team_members": team_members,
-    }
-    return render(request, "teams/team_detail.html", context)
 
 
 
@@ -102,26 +101,43 @@ def manage_requests(request, team_id):
     return render(request, "teams/manage_requests.html", {"team": team, "join_requests": join_requests})
 
 # Approve Join Request
+
 @login_required
 def approve_request(request, request_id):
-    # Get the join request
-    join_request = get_object_or_404(TeamMemberRequest, id=request_id)
+    team_request = get_object_or_404(TeamMemberRequest, id=request_id)
 
-    # Check if the logged-in user is an admin of the team
-    is_admin = TeamMember.objects.filter(team=join_request.team, user=request.user, is_admin=True).exists()
-    if not is_admin:
-        messages.error(request, "Only team admins can approve join requests.")
-        return redirect('team_detail', team_id=join_request.team.id)
+    if request.user == team_request.team.created_by or request.user == team_request.user:
+        # Approve the request
+        team_request.status = "Accepted"
+        team_request.save()
 
-    # Add the user to the team
-    TeamMember.objects.create(team=join_request.team, user=join_request.user)
+        # Add user to the team as a member
+        TeamMember.objects.create(
+            team=team_request.team,
+            user=team_request.user,
+            is_admin=False,  # You can change this if needed
+        )
 
-    # Delete the join request
-    join_request.delete()
+        # Delete the request
+        team_request.delete()
 
-    messages.success(request, f"{join_request.user.username} has been added to the team and the request was deleted.")
+        return JsonResponse({'success': True, 'message': 'Request approved!', 'username': team_request.user.username, 'status': 'Accepted'})
 
-    return redirect('team_detail', team_id=join_request.team.id)
+    return JsonResponse({'success': False, 'message': 'Permission denied!'})
+
+@login_required
+def reject_request(request, request_id):
+    team_request = get_object_or_404(TeamMemberRequest, id=request_id)
+
+    if request.user == team_request.team.created_by or request.user == team_request.user:
+        # Reject the request
+        team_request.status = "Rejected"
+        team_request.save()
+
+        return JsonResponse({'success': True, 'message': 'Request rejected!', 'username': team_request.user.username, 'status': 'Rejected'})
+
+    return JsonResponse({'success': False, 'message': 'Permission denied!'})
+
 
 # Delete Team
 @login_required
