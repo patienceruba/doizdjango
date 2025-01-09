@@ -14,61 +14,81 @@
                 {% if member.is_admin %}
                     <strong class="admin-badge">(Admin)</strong>
                 {% endif %}
+                {% if user|is_admin:team and not member.is_admin %}
+                    <form action="{% url 'remove_member' team.id member.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                {% endif %}
             </li>
+        {% empty %}
+            <li>No members in this team yet.</li>
         {% endfor %}
     </ul>
-{% if user|is_admin:team %}
-    <h2>Join Requests</h2>
-    {% if join_requests %}
-        <ul class="request-list">
-            {% for request in join_requests %}
-                <li class="request-item">
-                    <span>{{ request.user.username }} requested to join</span>
-                    <div class="request-actions">
-                        {% if request.status == 'Pending' %}
-                            <form action="{% url 'approve_request' request.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success">Approve</button>
-                            </form>
-                            <form action="{% url 'reject_request' request.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Reject</button>
-                            </form>
-                        {% else %}
-                            <span class="status">{{ request.status }}</span>
-                        {% endif %}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No join requests at the moment.</p>
-    {% endif %}
-{% else %}
-    <p>You need to be an admin to approve or reject requests.</p>
-    <!-- Debugging message -->
-    <p>Is Admin: {{ user|is_admin:team }}</p>
-{% endif %}
 
+    {% if user|is_admin:team %}
+        <h2>Join Requests</h2>
+        {% if join_requests %}
+            <ul class="request-list">
+                {% for request in join_requests %}
+                    <li class="request-item">
+                        <span>{{ request.user.username }} requested to join</span>
+                        <div class="request-actions">
+                            {% if request.status == 'Pending' %}
+                                <form action="{% url 'approve_request' request.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Approve</button>
+                                </form>
+                                <form action="{% url 'reject_request' request.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                </form>
+                            {% else %}
+                                <span class="status status-{{ request.status|lower }}">{{ request.status }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No join requests at the moment.</p>
+        {% endif %}
+    {% else %}
+        <p>You need to be an admin to approve or reject requests.</p>
+    {% endif %}
 </section>
 
 <style>
+    /* General Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+    }
+
     #team-detail {
         max-width: 800px;
-        margin: 0 auto;
+        margin: 20px auto;
+        background: #fff;
         padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     #team-detail h1 {
-        font-size: 2rem;
-        margin-bottom: 15px;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #333;
     }
 
     #team-detail h2 {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         margin-top: 20px;
+        color: #555;
     }
 
+    /* Member and Request Lists */
     .member-list,
     .request-list {
         list-style: none;
@@ -81,7 +101,7 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         padding: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -92,16 +112,7 @@
         font-weight: bold;
     }
 
-    .request-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .status {
-        color: grey;
-        font-style: italic;
-    }
-
+    /* Buttons */
     .btn {
         padding: 8px 15px;
         border: none;
@@ -119,9 +130,27 @@
     }
 
     .btn:hover {
-        opacity: 0.8;
+        opacity: 0.9;
     }
 
+    /* Request Status */
+    .status {
+        font-style: italic;
+    }
+
+    .status-pending {
+        color: orange;
+    }
+
+    .status-approved {
+        color: green;
+    }
+
+    .status-rejected {
+        color: red;
+    }
+
+    /* Responsive Design */
     @media (max-width: 600px) {
         .member-item,
         .request-item {
@@ -131,6 +160,7 @@
 
         .request-actions {
             flex-direction: column;
+            gap: 10px;
         }
     }
 </style>

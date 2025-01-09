@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.shortcuts import render, get_object_or_404, redirect
+
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Team, TeamMemberRequest, TeamMember
 from .forms import ApproveUserForm
 from django.http import JsonResponse
+
+from django.http import HttpResponseForbidden
+
 
 @login_required
 def create_team(request):
@@ -125,6 +128,19 @@ def approve_request(request, request_id):
 
     return JsonResponse({'success': False, 'message': 'Permission denied!'})
 
+
+# reject 
+def reject_request(request, id):
+    # Get the request object by ID
+    join_request = TeamMemberRequest.objects.get(id=id)
+    # Change the status to 'Rejected'
+    join_request.status = 'Rejected'
+    join_request.save()
+
+    # Redirect back to the team detail page
+    return redirect('team_detail', team_id=join_request.team.id)
+
+
 @login_required
 def reject_request(request, request_id):
     team_request = get_object_or_404(TeamMemberRequest, id=request_id)
@@ -157,3 +173,20 @@ def view_requests(request):
     return render(request, "teams/view_users_request.html", {"requests": requests})
 
 
+
+@login_required
+def remove_member(request, team_id, member_id):
+    team = get_object_or_404(Team, id=team_id)
+    member = get_object_or_404(TeamMember, id=member_id, team=team)
+
+    # Check if the current user is an admin of the team
+    if not TeamMember.objects.filter(team=team, user=request.user, is_admin=True).exists():
+        return HttpResponseForbidden("You are not allowed to perform this action.")
+
+    # Prevent admins from removing themselves
+    if member.user == request.user:
+        return HttpResponseForbidden("Admins cannot remove themselves.")
+
+    # Remove the member
+    member.delete()
+    return redirect("team_detail", team_id=team.id)

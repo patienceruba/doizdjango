@@ -8,21 +8,19 @@
                 <span class="material-symbols-outlined">keyboard_backspace</span>
             </div>
                 <ul>
-                    <div>
-                        <a href=""><img src="{% static 'image/OIP.jpg' %}" width="100" height="100"></a>
-                        <p><strong>Username:</strong> <small id="username-display">JohnDoe</small></p>  
-                    </div>
-                    <a href="{% url 'add' %}" id="add-btn"><li><span class="material-symbols-outlined">add</span>Add Task</li></a>
-                    <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
-                    <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
-                    <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
-                    <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-                    <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
-                    <a href="{% url 'calendar' %}" id="calender"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>
-                    <a href="profile.html" id="profile-btn"><li><span class="material-symbols-outlined">person</span>Profile</li></a>
-                    <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
-
-                </ul>
+                <a href="{% url 'dashboard' %}" id="profile-btn"><li><span class="material-symbols-outlined">dashboard_customize</span>Dashboard</li></a>
+                {% if user.is_staff %}
+                <a href="{% url 'add' %}" id="add-btn"><li><span class="material-symbols-outlined">add</span>Add Task</li></a>
+                <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
+                {% endif %}
+                <a href="" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
+                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Tasks</li></a>
+                <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
+                <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
+                <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
+                <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
+            </ul>
             </div>
         </div>
     <section id="add-section" class="section1">
@@ -101,4 +99,120 @@
 });
 
 </script>
+<style type="text/css">
+ /* Main Content Section */
+#add-section {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f9f9f9;
+    margin-left: 50px; /* To create space for the sidebar */
+}
+
+.add-tb {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-tb h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+.table form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="text"],
+textarea,
+input[type="date"],
+input[type="file"] {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+input[type="date"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #2c3e50;
+    background-color: white;
+}
+
+textarea {
+    resize: vertical;
+    height: 120px;
+}
+
+/* Date Fields in Same Row */
+#start, #end {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+#start input,
+#end input {
+    width: 48%; /* Adjust the width to make them fit side by side */
+}
+
+/* Button Styling */
+#btn {
+    padding: 12px 25px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#btn:hover {
+    background-color: #34495e;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #add-section {
+        margin-left: 0; /* Remove left margin on smaller screens */
+    }
+
+    .add-tb {
+        padding: 15px;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="date"],
+    input[type="file"] {
+        font-size: 14px;
+    }
+
+    #btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    /* Adjust the date inputs for smaller screens */
+    #start input,
+    #end input {
+        width: 100%; /* Stack them vertically on smaller screens */
+        margin-bottom: 10px;
+    }
+}
+#title, #message, #image{
+    border: none;
+    background-color: transparent;
+}
+</style>
 {% endblock %}

@@ -34,12 +34,13 @@
             {% endif %}
             {% if user.is_authenticated %}
                 {% for member in team.members.all %}
-                    {% if member.user == user and member.role == "admin" %}
+                    {% if member.user == user and member.is_admin %}
                         <a href="{% url 'manage_requests' team.id %}">Manage Requests</a>
                         <a href="{% url 'deleteteam' team.id %}">Delete Team</a>
                     {% endif %}
                 {% endfor %}
             {% endif %}
+
 
             {% for team in teams %}
                 <h3>{{ team.team.name }}</h3>
