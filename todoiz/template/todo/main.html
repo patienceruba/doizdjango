@@ -389,6 +389,63 @@ body {
         margin-left: 90%;
     }
 </style>
+<style type="text/css">
+    /*____________________________________________________deletes___________________________________*/
+    /* delete_confirmation.css */
+#wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background-color: #f7f7f7;
+    font-family: Arial, sans-serif;
+}
+
+#wrapper form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+#sure {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    min-height: 40px;
+}
+
+button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #c9302c;
+}
+
+#nope {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 16px;
+    text-decoration: none;
+    color: #5bc0de;
+}
+
+#nope:hover {
+    text-decoration: underline;
+}
+
+</style>
     {% include 'todo/nav.html' %}
     {% block content %}
 

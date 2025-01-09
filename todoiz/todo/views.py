@@ -240,3 +240,31 @@ def update_profile_picture(request):
         user_profile.save()
         return redirect('dashboard')
     return render(request, 'todo/user_profile.html')
+
+
+@login_required
+def upload_task(request):
+    if request.method == 'POST':
+        # Create a new task
+        task_name = request.POST.get('task_name')
+        task = Task.objects.create(name=task_name, user=request.user)
+        
+        # You can create an event to notify frontend if needed
+        # For example, you can use a session variable or a custom flag in context
+        request.session['new_task'] = True  # Set a session flag for the new task
+
+        return redirect('task_list')  # Redirect to task list or wherever you want
+
+    return render(request, 'event.html')
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def reset_task_notification(request):
+    # Clear the session flag after the task has been seen
+    if 'new_task' in request.session:
+        del request.session['new_task']
+    return JsonResponse({'status': 'success'})
+

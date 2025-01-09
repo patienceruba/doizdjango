@@ -1,47 +1,50 @@
-from django.contrib.auth.models import User
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Team(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    created_by = models.ForeignKey(
-    User, on_delete=models.CASCADE, related_name="created_teams")
-    members = models.ManyToManyField(User, related_name="teams", through="TeamMembership" )
-    image = models.ImageField(upload_to='images/')
-
+    description = models.TextField()
+    image = models.ImageField(upload_to='team_images/', blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
+    def is_member(self, user):
+        """Check if the given user is a member of the team."""
+        return self.members.filter(user=user).exists()
 
-class TeamMembership(models.Model):
+
+
+class TeamMember(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="members")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    is_admin = models.BooleanField(default=False)  # New field to indicate admin status
+    joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "team")  # Prevent duplicate memberships
 
     def __str__(self):
-        return f"{self.user.username} in {self.team.name}"
+        role = "Admin" if self.is_admin else "Member"
+        return f"{self.user.username} ({role}) of {self.team.name}"
 
 
-class JoinRequest(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="join_requests"
+class TeamMemberRequest(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="requests")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20, 
+        choices=(("Pending", "Pending"), ("Accepted", "Accepted"), ("Rejected", "Rejected")),
+        default="Pending"
     )
-    team = models.ForeignKey(
-        Team, on_delete=models.CASCADE, related_name="join_requests"
-    )
-    message = models.TextField(null=True, blank=True)
-    is_approved = models.BooleanField(default=False)
-    date_requested = models.DateTimeField(auto_now_add=True)
-    #notification_sent = models.BooleanField(default=False)  # For future notifications
+    requested_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "team")  # Prevent duplicate requests
 
     def __str__(self):
-        status = "Approved" if self.is_approved else "Pending"
-        return f"JoinRequest: {self.user.username} -> {self.team.name} ({status})"
+        return f"{self.user.username} requested to join {self.team.name}"
+
+

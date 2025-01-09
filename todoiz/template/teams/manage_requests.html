@@ -1,13 +1,159 @@
-<h1>Manage Join Requests for {{ team.name }}</h1>
-<ul>
-    {% for request in join_requests %}
-    <li>
-        {{ request.user.username }}: {{ request.message }}
-        <form method="post" action="{% url 'approve_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Approve</button>
-        </form>
-    </li>
-    {% endfor %}
-</ul>
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
 
+<section class="wrapper">
+    <div class="side-bar">
+        <div class="profile">
+            <div class="hide">
+                <span class="material-symbols-outlined">keyboard_backspace</span>
+            </div>
+            <ul>
+                <a href="{% url 'dashboard' %}" id="profile-btn"><li><span class="material-symbols-outlined">dashboard_customize</span>Dashboard</li></a>
+                {% if user.is_staff %}
+                <a href="{% url 'add' %}" id="add-btn"><li><span class="material-symbols-outlined">add</span>Add Task</li></a>
+                <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
+                {% endif %}
+                <a href="{% url 'today' %}" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
+                <a href="{% url 'event' %}" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
+                <a href="{% url 'task_done' %}" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
+                <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+                <a href="{% url 'calendar' %}" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>               
+                <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
+                <a href="{% url 'logout' %}" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+    <section class="content-wrapper">
+        <section id="view-section" class="section1">
+        <h1>REQUEST</h1>
+                <h2>Manage Requests for {{ team.name }}</h2>
+
+                {% for request in join_requests %}
+                    <p>{{ request.user.username }} wants to join this team.</p>
+                    <form method="post" action="{% url 'approve_request' request.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Approve</button>
+                    </form>
+                {% endfor %}
+
+        </div>
+    </section>
+    </section>
+</section>
+
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+
+<style type="text/css">
+    /* Today's Events Section */
+    .content-wrapper{
+        width: 100%;
+        
+    }
+#view-section {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.content-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.content-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 5 columns */
+    gap: 20px;
+}
+
+.content-container li {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 200px;
+    max-height: 200px;
+}
+
+.content-container li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.content-item img {
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+.content-item a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.content-item a:hover {
+    color: #0056b3;
+}
+
+.content-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+    text-align: center;
+}
+.devs a{
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border-radius:  20px 0 20px 0;
+}
+.join{
+    margin-top: 40px;
+
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .content-container ul {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns for medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .content-container ul {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .content-container ul {
+        grid-template-columns: 1fr; /* Single column for very small screens */
+    }
+}
+
+</style>
+<style type="text/css">
+    #delete{
+        margin-top: 40px;
+    }
+    
+</style>
+{% endblock %}

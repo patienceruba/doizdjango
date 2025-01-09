@@ -4,63 +4,18 @@
 {% block content %}
 
 <section class="wrapper">
-    <div class="side-bar">
-    <div class="profile">
-        <div class="hide">
-            <span class="material-symbols-outlined">keyboard_backspace</span>
-        </div>
-        <ul>
-            <div>
-                <a href=""><img src="{% static 'image/OIP.jpg' %}" width="30" height="30"></a>
-                <p><strong>Username:</strong> <small id="username-display">JohnDoe</small></p>  
-            </div>
-            <a href="{% url 'add' %}" id="add-btn"><li><span class="material-symbols-outlined">add</span>Add Task</li></a>
-            <a href="{% url 'home' %}" id="view-btn"><li><span class="material-symbols-outlined">view_list</span>View Task</li></a>
-            <a href="" id="today-btn"><li><span class="material-symbols-outlined">today</span>Today</li></a>
-           <a href="upcoming.html" id="upcoming-btn"><li><span class="material-symbols-outlined">event_upcoming</span>Event</li></a>
-            <a href="done.html" id="done"><li><span class="material-symbols-outlined">task</span>Done</li></a>
-            <a href="team.html" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
-            <a href="calender.html" id="team"><li><span class="material-symbols-outlined">calendar_month</span>Calender</li></a>
-            <a href="profile.html" id="profile-btn"><li><span class="material-symbols-outlined">person</span>Profile</li></a>
-            <a href="loginpage.html" id="login-btn"><li><span class="material-symbols-outlined">login</span>login</li></a>
-            <a href="loginpage.html" id="logout-btn"><li><span class="material-symbols-outlined">logout</span>logout</li></a>
-        </ul>
-    </div>
-</div>
+    
     <section id="view-section" class="section1">
         <div class="view-list">
             <h2>seach result for  "{{query}}"</h2>
-            <table>
-                <tr>
-                    <th>Done</th>
-                    <th>Task Name</th>
-                    <th>Start Date</th>
-                    <th>Task Progress</th>
-                    {% if user.is_staff %}
-                    <th>Update</th>
-                    <th>Delete</th>
-                    {% endif %}
-                </tr>
                 {% for result in results %}
-                <tr>
-                    
-                       {% if tasks.progress == 100 %}
-                            <td><input type="checkbox" name="asdone" id="asdone" checked disabled></td>
-                        {% else %}
-                            <td><input type="checkbox" name="asdone" id="asdone" disabled></td>
-                        {% endif %}
-
-                        <td>{{result.title}}</td>
-                        <td>{{result.start_date}}</td>
-                        <td>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: {{ result.progress }}%;"></div>
-                                <span class="progress-text">{{result.progress}}%</span>
-                            </div>
-                        </td>
+                        <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}"></a>
+                        <a href="">{{result.title}}</a>
+                        <p>{{result.start_date}}</p>
+                        
                         {% if user.is_staff %}
-                        <td id="update-btn"><a href="{% url 'update'  result.id%}">Update</a></td>
-                        <td id="dlt-btn"><a href="{% url 'delete'  result.id%}">Delete</a></td>
+                        <p id="update-btn"><a href="{% url 'update'  result.id%}">Update</a></p>
+                        <p id="dlt-btn"><a href="{% url 'delete'  result.id%}">Delete</a></p>
                         {% endif %}
 
                 </tr>
@@ -72,4 +27,70 @@
 <section>
     <span> <p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
 </section>
+<style type="text/css">
+    /* Basic Reset */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+}
+
+/* Main Content Section */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7fa;
+}
+
+
+
+.view-list h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.view-list a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 20px;
+    display: block;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.view-list a:hover {
+    color: #3498db;
+}
+
+.view-list p {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+#update-btn, #dlt-btn {
+    margin-top: 10px;
+}
+
+#update-btn a, #dlt-btn a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+#update-btn a:hover, #dlt-btn a:hover {
+    color: #1abc9c;
+}
+
+/* Footer Styles */
+section span {
+    display: block;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #2c3e50;
+    color: #fff;
+}
+</style>
 {% endblock %}

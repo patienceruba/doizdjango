@@ -15,9 +15,12 @@
             {% endif %}
         </form>
         <ul>
-            <li>
-                <span class="material-symbols-outlined">notifications</span>
-            </li>
+            <div id="notification-bell">
+                <li>
+                    <span id="notification-count"  class="material-symbols-outlined">notifications</span>
+                    <i class="fa fa-bell" aria-hidden="true"></i>
+                </li>
+            </div>
             <li>
                 <p><small id="username-display"><a href="" id="uname">{{ user.username }}</a></small></p>
             </li>
@@ -31,3 +34,55 @@
         </ul>
     </div>
 </nav>
+<style type="text/css">
+   #notification-bell {
+    
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 30px;
+    color: #333;
+}
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+</style>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    // Check if the session flag for new task is set (can be passed through context or via a hidden element)
+    if ({{ request.session.new_task|default:"false" }} == "true") {
+        showNotification();
+        
+        // Reset session flag
+        fetch("/reset_task_notification/", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // Send CSRF token in the request header
+            }
+        })
+        .then(response => response.json());
+    }
+
+    function showNotification() {
+        const bellIcon = document.getElementById('notification-bell');
+        const notificationCount = document.getElementById('notification-count');
+        
+        // Show notification count (increase as needed)
+        notificationCount.innerText = '1';
+        bellIcon.style.color = 'red';  // Change bell color when there's a notification
+    }
+});
+</script>
+
+

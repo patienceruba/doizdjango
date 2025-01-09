@@ -1,1 +1,87 @@
-<p>successfuly created</p>
+{% extends 'todo/main.html' %}
+{% block content %}
+{% load team_filters %}
+
+<section id="team-detail">
+    <h1>{{ team.name }}</h1>
+    <p>{{ team.description }}</p>
+
+    <h2>Members</h2>
+    <ul>
+        {% for member in team.members.all %}
+            <li>
+                {{ member.user.username }}
+                {% if member.is_admin %}
+                    <strong>(Admin)</strong>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if user|is_admin:team %}
+        <h2>Join Requests</h2>
+        {% if join_requests %}
+            <ul>
+                {% for request in join_requests %}
+                    <li>
+                        {{ request.user.username }} requested to join:
+                        <form action="{% url 'approve_request' request.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form action="{% url 'reject_request' request.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No join requests at the moment.</p>
+        {% endif %}
+    {% endif %}
+</section>
+
+<style>
+    #team-detail h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    #team-detail ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    #team-detail ul li {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #team-detail .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+    }
+
+    #team-detail .btn-success {
+        background-color: green;
+    }
+
+    #team-detail .btn-danger {
+        background-color: red;
+    }
+
+    #team-detail .btn:hover {
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}

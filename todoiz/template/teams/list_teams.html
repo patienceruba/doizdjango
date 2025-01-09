@@ -30,36 +30,27 @@
         <h1>Available Teams</h1>
         <div>
             {% if user.is_staff %}
-            <a href="{% url 'create_team' %}">Create Team</a>
-            {% for request in join_requests %}
-                <a href="{% url 'approve_request' pk=request.id %}">Approve</a>
-            {% endfor %}
+                <a href="{% url 'create_team' %}">Create Team</a>
             {% endif %}
-        </div>
-        <div  class ="content-container">
-            <ul>
-             {% for team in teams %}
-                <div class="devs">
-                   
-                        <div>
-                            <li>
-                                <img src="{{ team.image.url }}" alt="image" width="150" height="150">
-                                <p>{{ team.name }}</p>
-                                <p> {{ team.description }}</p>
+            {% if user.is_authenticated %}
+                {% for member in team.members.all %}
+                    {% if member.user == user and member.role == "admin" %}
+                        <a href="{% url 'manage_requests' team.id %}">Manage Requests</a>
+                        <a href="{% url 'deleteteam' team.id %}">Delete Team</a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
 
-                            </li>
-                        </div>
-                        <div class="Join">
-                            <a href="{% url 'join_team_request' team.id %}">Request to Join</a>
-                        </div>
-                       <div id="delete">
-                            {% if user.is_staff %}
-                            <a href="{% url 'deleteteam' team.id%}">Delete</a>
-                            {% endif %}
-                       </div>
-                </div>
+            {% for team in teams %}
+                <h3>{{ team.team.name }}</h3>
+                <a href="{% url 'team_detail' team.team.id %}">View Details</a>
+
+                {% if team.is_member %}
+                    <p>You are already a member of this team.</p>
+                {% else %}
+                    <a href="{% url 'join_team_request' team.team.id %}">Request to Join</a>
+                {% endif %}
             {% endfor %}
-            </ul>
         </div>
     </section>
     </section>
