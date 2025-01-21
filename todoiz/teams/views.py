@@ -1,12 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Team, TeamMemberRequest, TeamMember
 from .forms import ApproveUserForm
 from django.http import JsonResponse
-
 from django.http import HttpResponseForbidden
 
 
@@ -61,33 +59,46 @@ def list_teams(request):
 
     for team in teams:
         is_member = TeamMember.objects.filter(user=request.user, team=team).exists()
-        teams_with_status.append({'team': team, 'is_member': is_member})
+        teams_with_status.append({
+            'team': team,
+            'is_member': is_member,
+        })
 
     return render(request, 'teams/list_teams.html', {'teams': teams_with_status})
+
 
 
 # Join Team Request
 @login_required
 def join_team_request(request, pk):
     team = get_object_or_404(Team, id=pk)
+    
+    # Check if the user is already a member of the team
     is_member = TeamMember.objects.filter(user=request.user, team=team).exists()
 
+    # Handle POST request for joining the team
     if request.method == 'POST':
+        # If the user is already a member, show a warning
         if is_member:
             messages.warning(request, "You are already a member of this team.")
             return redirect('list_teams')
 
+        # Check if the user has already sent a request to join the team
         if TeamMemberRequest.objects.filter(user=request.user, team=team).exists():
             messages.warning(request, "You have already sent a join request for this team.")
             return redirect('list_teams')
 
-        # Create a join request
-        message = request.POST.get('message', '')
+        # Create a new join request if no previous request exists
+        message = request.POST.get('message', '')  # Get the message from the form
         TeamMemberRequest.objects.create(user=request.user, team=team, message=message)
+        
+        # Success message after successfully sending the join request
         messages.success(request, "Your join request has been sent successfully.")
-        return redirect('list_teams')
+        return redirect('list_teams')  # Redirect to the teams list page
 
+    # Render the join team request page with the necessary context
     return render(request, 'teams/join_team_request.html', {'team': team, 'is_member': is_member})
+
 
 
 # Manage Join Requests (Admin Only)
@@ -125,6 +136,7 @@ def approve_request(request, request_id):
         team_request.delete()
 
         return JsonResponse({'success': True, 'message': 'Request approved!', 'username': team_request.user.username, 'status': 'Accepted'})
+        return redirect("home")
 
     return JsonResponse({'success': False, 'message': 'Permission denied!'})
 

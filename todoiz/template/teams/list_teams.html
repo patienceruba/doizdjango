@@ -32,26 +32,31 @@
             {% if user.is_staff %}
                 <a href="{% url 'create_team' %}">Create Team</a>
             {% endif %}
-            {% if user.is_authenticated %}
-                {% for member in team.members.all %}
-                    {% if member.user == user and member.is_admin %}
-                        <a href="{% url 'manage_requests' team.id %}">Manage Requests</a>
-                        <a href="{% url 'deleteteam' team.id %}">Delete Team</a>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-
-
-            {% for team in teams %}
-                <h3>{{ team.team.name }}</h3>
-                <a href="{% url 'team_detail' team.team.id %}">View Details</a>
-
-                {% if team.is_member %}
+            {% for item in teams %}
+                <h3>{{ item.team.name }}</h3>
+                
+                {% if item.team.image %}
+                    <img src="{{ item.team.image.url }}" alt="{{ item.team.name }}" id="img" width="100" height="100">
+                {% else %}
+                    <p>No image available for this team.</p>
+                {% endif %}
+                <br>
+                {% if item.is_member %}
+                    <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
+                    <a href="{% url 'chat' %}" id="view-details-btn">Start Chat</a>
+                {% endif %}
+                {% if item.is_member %}
                     <p>You are already a member of this team.</p>
                 {% else %}
-                    <a href="{% url 'join_team_request' team.team.id %}">Request to Join</a>
+                    {% if team.status == 'Pending' %}
+                        <button disabled class="btn-disabled">Request Sent</button>
+                    {% else %}
+                        <a href="{% url 'join_team_request' item.team.id %}" class="btn-request">Request to Join</a>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
+
+
         </div>
     </section>
     </section>
@@ -143,7 +148,20 @@
     margin-top: 40px;
 
 }
-
+#view-details-btn{
+    border: none;
+    background: blue;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 10px;
+    transition: 0.5s;
+}
+#view-details-btn:hover{
+    background-color: skyblue;
+}
+#img{
+    margin-bottom: 10px;
+}
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
     .content-container ul {

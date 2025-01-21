@@ -8,6 +8,7 @@
 
     <h2>Team Members</h2>
     <ul class="member-list">
+        
         {% for member in team.members.all %}
             <li class="member-item">
                 <span>{{ member.user.username }}</span>
@@ -33,6 +34,7 @@
                 {% for request in join_requests %}
                     <li class="request-item">
                         <span>{{ request.user.username }} requested to join</span>
+                        <p>{{request.message}}</p>
                         <div class="request-actions">
                             {% if request.status == 'Pending' %}
                                 <form action="{% url 'approve_request' request.id %}" method="post" style="display:inline;">
@@ -74,6 +76,7 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 100px;
     }
 
     #team-detail h1 {

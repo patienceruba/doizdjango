@@ -9,6 +9,7 @@ urlpatterns = [
     path('notis', include('notifications.urls')),
     path('userau', include('userAuthent.urls')),
     path('team', include('teams.urls')),
+    path('chat', include('chat.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

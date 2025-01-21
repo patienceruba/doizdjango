@@ -33,8 +33,10 @@
                         {% for event in events_today %}
                             <li>
                                 <div class="content-item">
-                                    <a href=""><img src="{{ event.image.url }}" alt="{{ event.title }}"></a>
-                                    <a href="">{{ event.title }}</a>
+                                    <div id="img-space">
+                                        <a href=""><img src="{{ event.image.url }}" alt="{{ event.title }}" id="img"></a>
+                                    </div>
+                                    <a href="{% url 'task_detail' event.id %}">{{ event.title }}</a>
                                     <p>{{ event.description }}</p>
                                     <p><strong>Time:</strong> {{ event.start_date|date:"D, M d, Y" }}</p>
                                 </div>
@@ -105,7 +107,7 @@
 }
 
 .content-item img {
-    width: 100%;
+    width: 50%;
     height: auto;
     max-height: 150px;
     border-radius: 10px;
@@ -131,7 +133,14 @@
     margin: 5px 0;
     text-align: center;
 }
-
+#img-space{
+    width: 100%;
+    background-color: rgba(211, 211, 211, .5);
+    border-radius: 10px;
+}
+#img{
+    margin-left: 30%;
+}
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
     .content-container ul {

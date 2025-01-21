@@ -41,11 +41,11 @@
                         {% else %}
                             {% if contents.start_date and contents.start_date < now %}
                                 <div id="">
-                                    <span class="enroll-disabled">Enrollment Closed</span>
+                                    <a href=""></a><span class="enroll-disabled">Enrollment Closed</span>
                                 </div>
                             {% else %}
                                 <div id="enroll">
-                                    <a href="">Enroll</a>
+                                    <a href="{% url 'task_detail' contents.id %}">Enroll</a>
                                 </div>
                             {% endif %}
                         {% endif %}

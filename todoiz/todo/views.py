@@ -70,10 +70,6 @@ def addRecord(request):
     return render(request, "todo/addrecord.html")
 
 
-
-
-from django.contrib import messages
-
 def deleteRow(request, pk):
     item = get_object_or_404(RecordRow, pk=pk)
     if request.method == "POST":
@@ -268,3 +264,14 @@ def reset_task_notification(request):
         del request.session['new_task']
     return JsonResponse({'status': 'success'})
 
+@login_required
+def task_detail(request, pk):
+    # Retrieve the task based on the primary key (pk) or show 404 if not found
+    record = get_object_or_404(RecordRow, pk=pk)
+
+    # Pass the record (task) and its related subtasks to the template
+    context = {
+        'record': record
+    }
+
+    return render(request, 'todo/task_detail.html', context)

@@ -17,28 +17,27 @@ class RecordRow(models.Model):
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        # Automatically set `done` to True if progress is 100 or more
         previous_done = self.done
         self.done = self.progress >= 100
-
         super().save(*args, **kwargs)
 
-        # If the task has just been marked as done, create a TaskDone entry
+        # Create a TaskDone entry if just marked as done
         if self.done and not previous_done:
-            TaskDone.objects.create(record=self, user=self.user)
+            TaskDone.objects.get_or_create(record=self, user=self.user)
 
     def __str__(self):
         return self.title
 
     def update_progress(self):
-        # Assuming you have a related model for subtasks
         total_subtasks = self.subtasks.count()
         if total_subtasks > 0:
             completed_subtasks = self.subtasks.filter(done=True).count()
-            self.progress = (completed_subtasks / total_subtasks) * 100
-            self.save()
+            self.progress = int((completed_subtasks / total_subtasks) * 100)
+        else:
+            self.progress = 0
+        self.save()
 
-
+        
 class TaskDone(models.Model):
     record = models.OneToOneField(RecordRow, on_delete=models.CASCADE, related_name='task_done')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -46,6 +45,7 @@ class TaskDone(models.Model):
 
     def __str__(self):
         return f"Task '{self.record.title}' completed by {self.user.username} on {self.completed_at}"
+
 
 
 class PDFDocument(models.Model):
@@ -63,32 +63,29 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class SubTask(models.Model):
     record = models.ForeignKey(RecordRow, related_name='subtasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
     done = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-    comment = models.CharField(max_length=100)
+    comment = models.CharField(max_length=100, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Check if the subtask is being marked as done
         was_done = self.done
         super().save(*args, **kwargs)
 
-        # If a subtask was marked as done, check if all subtasks for the record are done
+        # Update the parent task's progress
+        self.record.update_progress()
+
+        # If the subtask is newly marked as done, check for all subtasks
         if self.done and not was_done:
-            self.record.update_progress()  # Update the progress based on subtasks
-            self.check_if_all_subtasks_done()  # Check if all subtasks are done
+            self.check_if_all_subtasks_done()
 
     def check_if_all_subtasks_done(self):
-        # Check if all subtasks are done
-        if self.record.subtasks.filter(done=False).exists():
-            return  # Not all subtasks are done, do nothing
-
-        # If all subtasks are done, mark the parent task as done
-        self.record.done = True
-        self.record.save()
+        # Mark the parent task as done if all subtasks are done
+        if not self.record.subtasks.filter(done=False).exists():
+            self.record.done = True
+            self.record.save()
 
     def __str__(self):
         return f"{self.title} (Subtask of {self.record.title})"

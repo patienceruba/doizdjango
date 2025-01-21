@@ -1,0 +1,184 @@
+{% extends "todo/main.html" %}
+{% block content %}
+<section class="wrapper">
+    <!-- Sidebar -->
+    <div class="side-bar">
+        <div class="profile">
+            <div class="hide">
+                <span class="material-symbols-outlined">keyboard_backspace</span>
+            </div>
+            <ul>
+                <a href="{% url 'dashboard' %}" id="profile-btn">
+                    <li><span class="material-symbols-outlined">dashboard_customize</span>Dashboard</li>
+                </a>
+                {% if user.is_staff %}
+                <a href="{% url 'add' %}" id="add-btn">
+                    <li><span class="material-symbols-outlined">add</span>Add Task</li>
+                </a>
+                <a href="{% url 'home' %}" id="view-btn">
+                    <li><span class="material-symbols-outlined">view_list</span>View Task</li>
+                </a>
+                {% endif %}
+                <a href="{% url 'today' %}" id="today-btn">
+                    <li><span class="material-symbols-outlined">today</span>Today</li>
+                </a>
+                <a href="{% url 'event' %}" id="upcoming-btn">
+                    <li><span class="material-symbols-outlined">event_upcoming</span>Event</li>
+                </a>
+                <a href="{% url 'task_done' %}" id="done">
+                    <li><span class="material-symbols-outlined">task</span>Done</li>
+                </a>
+                <a href="team.html" id="team">
+                    <li><span class="material-symbols-outlined">groups</span>Team</li>
+                </a>
+                <a href="{% url 'calendar' %}" id="calendar">
+                    <li><span class="material-symbols-outlined">calendar_month</span>Calendar</li>
+                </a>
+                <a href="loginpage.html" id="login-btn">
+                    <li><span class="material-symbols-outlined">login</span>Login</li>
+                </a>
+                <a href="{% url 'logout' %}" id="logout-btn">
+                    <li><span class="material-symbols-outlined">logout</span>Logout</li>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Chat Section -->
+    <section id="view-section">
+        <div class="chat-wrapper">
+            <div class="chat-section">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <h2>Team Chat</h2>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-box" id="chat-box">
+                    {% for message in messages %}
+                    <div class="message {% if message.sender == user.username %}sent{% endif %}">
+                        <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+                    </div>
+                    {% empty %}
+                    <p>No messages yet. Start the conversation!</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input">
+                    <form method="POST" >
+                        {% csrf_token %}
+                        <input type="text" id="chat-input" name="message" placeholder="Type a message..." required>
+                        <button type="submit" id="send-btn">Send</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- Footer -->
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+
+<!-- Inline Styles -->
+<style>
+    #view-section{
+        width: 80%;
+        margin: 5% 10%;
+    }
+    .chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 500px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 20px;
+    }
+
+    .chat-header {
+        background-color:#2c3e50;
+        padding: 10px 15px;
+        border-radius: 8px 8px 0 0;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: 20px;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        background-color: #e0f7fa;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 70%;
+    }
+
+    .message.sent {
+        background-color: #e3f2fd;
+        align-self: flex-end;
+    }
+
+    .message p {
+        margin: 0;
+    }
+
+    .chat-input {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+
+    }
+
+    .chat-input input {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 200%;
+    }
+
+    .chat-input button {
+        width: 30%;
+        padding: 10px;
+        background-color: #2c3e50;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+
+    .chat-input button:hover {
+        background-color: #2c3e82;
+    }
+
+    .chat-input input:focus {
+        border-color: #1abc9c;
+    }
+</style>
+{% endblock %}
