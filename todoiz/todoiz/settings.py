@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "userAuthent",
     'teams',
     'chat',
+    'assigntask',
 ]
 
 MIDDLEWARE = [

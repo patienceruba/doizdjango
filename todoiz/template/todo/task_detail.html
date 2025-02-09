@@ -40,13 +40,16 @@
                         <li>
                             <h3>{{ subtask.title }}</h3>
                             <p><strong>Description:</strong> {{ subtask.comment }}</p>
+                            <p><input type="checkbox" name="complete">mark as complete</p>
                             <p><strong>Status:</strong> {% if subtask.done %}Completed{% else %}Not Completed <br><a href="" id="complete_task">complete task</a>{% endif %}</p>
                         </li>
                     {% empty %}
                         <p>No subtasks available for this task.</p>
                     {% endfor %}
                 </ul>
-
+                {% if is_owner %}
+                    <a href="{% url 'event' %}">add subtask</a>
+                {% endif %}
                 <a href="{% url 'event' %}">Back to Task List</a>
             </div>
 

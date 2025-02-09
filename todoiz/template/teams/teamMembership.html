@@ -29,7 +29,7 @@
          <div class="content-container">
              
             <div>
-                <h1>Available Teams</h1>
+                <h1>Teams you're member of:</h1>
             </div>
 
             <div>
@@ -44,16 +44,8 @@
                             <p>No image available for this team.</p>
                         {% endif %}
                         <br>
-                        {% if item.is_member %}
-                            <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
-                            <!--<a href="{% url 'chat' %}" id="view-details-btn">Start Chat</a>-->
-                        {% else %}
-                            {% if is_pending %}
-                                <button disabled class="btn-disabled">Request Sent</button>
-                            {% else %}
-                                <a href="{% url 'join_team_request' item.team.id %}" class="btn-request">Request to Join</a>
-                            {% endif %}
-                        {% endif %}
+                       
+                        <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
                     </div>
                 </li>
                 {% endfor %}

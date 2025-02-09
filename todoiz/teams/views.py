@@ -68,36 +68,42 @@ def list_teams(request):
 
 
 
-# Join Team Request
 @login_required
 def join_team_request(request, pk):
     team = get_object_or_404(Team, id=pk)
-    
+
     # Check if the user is already a member of the team
     is_member = TeamMember.objects.filter(user=request.user, team=team).exists()
 
-    # Handle POST request for joining the team
+    # Check if there is an existing join request
+    team_request = TeamMemberRequest.objects.filter(user=request.user, team=team).first()
+    is_pending = team_request.status == "pending" if team_request else False
+
     if request.method == 'POST':
         # If the user is already a member, show a warning
         if is_member:
             messages.warning(request, "You are already a member of this team.")
             return redirect('list_teams')
 
-        # Check if the user has already sent a request to join the team
-        if TeamMemberRequest.objects.filter(user=request.user, team=team).exists():
-            messages.warning(request, "You have already sent a join request for this team.")
+        # If there is a pending join request, show a warning
+        if team_request and team_request.status == "pending":
+            messages.warning(request, "Your join request is still pending.")
             return redirect('list_teams')
 
-        # Create a new join request if no previous request exists
+        # Create a new join request if no previous pending request exists
         message = request.POST.get('message', '')  # Get the message from the form
-        TeamMemberRequest.objects.create(user=request.user, team=team, message=message)
+        TeamMemberRequest.objects.create(user=request.user, team=team, message=message, status="pending")
         
-        # Success message after successfully sending the join request
         messages.success(request, "Your join request has been sent successfully.")
         return redirect('list_teams')  # Redirect to the teams list page
 
-    # Render the join team request page with the necessary context
-    return render(request, 'teams/join_team_request.html', {'team': team, 'is_member': is_member})
+    # Render the join team request page
+    return render(request, 'teams/join_team_request.html', {
+        'team': team,
+        'is_member': is_member,
+        'team_request': team_request,
+        'is_pending': is_pending,
+    })
 
 
 
@@ -202,3 +208,6 @@ def remove_member(request, team_id, member_id):
     # Remove the member
     member.delete()
     return redirect("team_detail", team_id=team.id)
+
+
+

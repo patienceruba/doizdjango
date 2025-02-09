@@ -26,35 +26,54 @@
     </div>
 
     <section class="content-wrapper">
-        <section id="view-section" class="section1">
-            <div class="content-container">
-                {% for contents in content %}
-                    <div class="content-item">
-                        <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}"></a>
-                        <a href="">{{ contents.title }}</a>
-                        <p>{{ contents.start_date }}</p>
-                        
-                        {% if contents.title in task_done_list %}
-                            <div id="enroll">
-                                <span>Already Enrolled</span>
-                            </div>
-                        {% else %}
-                            {% if contents.start_date and contents.start_date < now %}
-                                <div id="">
-                                    <a href=""></a><span class="enroll-disabled">Enrollment Closed</span>
-                                </div>
-                            {% else %}
-                                <div id="enroll">
-                                    <a href="{% url 'task_detail' contents.id %}">Enroll</a>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                {% empty %}
-                    <p>No content available at the moment. Please check back later.</p>
-                {% endfor %}
-            </div>
 
+        <section id="view-section" class="section1">
+            <h1>Available Task for you</h1>
+            <div class="content-container">
+                
+                {% if user.is_staff %}
+                    {% for task in tasks %}
+                    <div class="content-item">
+                        <a href="{% url 'task_detail' task.id %"><img src="{{ task.image.url }}" alt="{{ task.title }}" align="{{ task.title }}"></a>
+                        <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a>
+                        <p>{{ task.start_date }}</p>
+                        <p>{{ task.end_date }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Check if assigned_tasks exists and has tasks -->
+                    {% if assigned_tasks %}
+                        <ul>
+                            {% for task in assigned_tasks %}
+                                <div class="content-item">
+                                    <a href="{% url 'task_detail' task.id %"><img src="{{ task.task.image.url }}" alt="{{ task.task.title }}" align="{{ task.task.title }}"></a>
+                                    <a href="{% url 'task_detail' task.id %}">{{ task.task.title }}</a>
+                                    <p>{{ task..start_date }}</p>
+
+
+                                    {% if task.title in task_done_list %}
+                                        <div id="enroll">
+                                            <span>Already Enrolle</span>
+                                        </div>
+                                    {% else %}
+                                        {% if task.start_date and task.start_date < now %}
+                                            <div id="">
+                                                <a href=""></a><span class="enroll-disabled">Opps</span>
+                                            </div>
+                                        {% else %}
+                                            <div id="enroll">
+                                                <a href="{% url 'task_detail' task.id %}">start</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No tasks assigned to you yet.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
     </section>
         <section class="footer">
             <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>

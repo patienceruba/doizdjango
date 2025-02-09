@@ -70,7 +70,7 @@
                         {% if tasks_completed %}
                             <a href="{% url 'task_done' %}">
                                 <h3>Tasks Completed</h3>
-                                <p>{{ tasks_completed }}</p>
+                                <p>{{ tasks_completed }} </p>
                             </a>
                         {% else %}
                             <h3>Tasks Completed</h3>
@@ -79,23 +79,30 @@
 
                 </div>                
                 <div class="dashboard-item">
-                    <a href="">
-                    <h3>Upcoming Events</h3>
-                    <p>{{ upcoming_events }}</p>
+                    {% if assigned_tasks %}
+                    <a href="{% url 'event' %}">
+                    <h3>Assigned Task</h3>
+                    <p>{{ assigned_tasks }}</p>
                     </a>
+                    {% else %}
+                        <h3>Assigned Task</h3>
+                        <p>0</p>
+                    {% endif %}
                 </div>
                 
                 
                 <div class="dashboard-item">
-                    <a href="">
+                    {% if teams %}
+                    <a href="{% url 'teamMembership' %}">
                     <h3>Team Members</h3>
-                    <p>{{ team_members }}</p>
+                    <p>{{teams}}</p>
                     </a>
+                    {% endif %}
                 </div>
                 <div class="dashboard-item">
                     <a href="">
                     <h3>Task in Progress</h3>
-                    <p>{{ team_members }}</p>
+                    <p>0</p>
                     </a>
                 </div>
             </div>
@@ -110,7 +117,7 @@
                 </div>
             </div>
         <section class="footer">
-            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+            <span><p>&copy; Powered By I-Mind Company. All Rights Reserved.</p></span>
         </section>
     </section>
 </section>

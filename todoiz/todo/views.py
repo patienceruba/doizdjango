@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile
+from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask
 from django.utils import timezone
 from datetime import datetime
 from django.contrib import messages
@@ -7,24 +7,25 @@ from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from .models import UserProfile
 from django.contrib.auth.decorators import user_passes_test,login_required
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from assigntask.models import AssignedTask
+from teams.models import TeamMember
 
 # Create your views here.
 @login_required
 @user_passes_test(lambda user: user.is_staff)
 def home(request):
-    task = RecordRow.objects.all()
+    task = RecordRow.objects.filter(user=request.user)
     context = {"task":task}
     return render(request, "todo/index.html", context)
 
@@ -144,8 +145,6 @@ def calendar(request):
 
 
 
-
-
 def upload_pdf(request):
     if request.method == 'POST' and request.FILES['pdf']:
         title = request.POST.get('title')
@@ -168,12 +167,6 @@ def pdf_list(request):
     return render(request, 'pdf_list.html', {'pdfs': pdfs})
 
 
-def event(request):
-    content = RecordRow.objects.all()
-    context = {"content":content}
-    return render(request, "todo/events.html", context)
-
-
 @login_required
 def task_done_view(request):
     # Retrieve all completed tasks for the logged-in user
@@ -192,14 +185,18 @@ def today_view(request):
 
 
 def dashboard_view(request):
-    total_tasks = RecordRow.objects.filter(user=request.user).count()
+    total_tasks = RecordRow.objects.filter(user=request.user).count()+AssignedTask.objects.filter(user=request.user).count()
     task_done_list = TaskDone.objects.filter(user=request.user).order_by('-completed_at')
     total_tasks_completed = task_done_list.count()  # Count completed tasks
+    assigned_tasks = AssignedTask.objects.filter(user=request.user).count()
+    teams = TeamMember.objects.filter(user=request.user).count()
 
     context = {
         'task_done_list': task_done_list,
         'total_tasks': total_tasks,
-        'tasks_completed': total_tasks_completed  # Pass count to template
+        'tasks_completed': total_tasks_completed, # Pass count to template
+        'assigned_tasks':assigned_tasks,
+        'teams':teams,
     }
     return render(request, 'todo/dashboard.html', context)
 
@@ -268,10 +265,20 @@ def reset_task_notification(request):
 def task_detail(request, pk):
     # Retrieve the task based on the primary key (pk) or show 404 if not found
     record = get_object_or_404(RecordRow, pk=pk)
+    is_owner = RecordRow.objects.filter(user= request.user)
 
     # Pass the record (task) and its related subtasks to the template
     context = {
-        'record': record
+        'record': record,
+        'is_owner':is_owner
     }
 
     return render(request, 'todo/task_detail.html', context)
+
+
+
+def team_member_ship(request):
+    teams = TeamMember.objects.filter(user = request.user)
+    return render(request, "teams/teamMembership.html", {"teams":teams})
+
+

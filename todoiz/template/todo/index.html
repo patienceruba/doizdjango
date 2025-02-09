@@ -35,6 +35,7 @@
                     <th>Start Date</th>
                     <th>Expected End Date</th>
                     <th>Task Progress</th>
+                    <th>assign task to the user</th>
                     <th>Update</th>
                     <th>Delete</th>
                 </tr>
@@ -47,7 +48,7 @@
                             <td><input type="checkbox" name="asdone" id="asdone" disabled></td>
                         {% endif %}
 
-                        <td>{{tasks.title}}</td>
+                        <td><a href="{% url 'task_detail' tasks.id %}">{{tasks.title}}</a></td>
                         <td>{{tasks.start_date}}</td>
                         <td>{{tasks.end_date}}</td>
                         <td>
@@ -55,6 +56,7 @@
                                 <div class="progress-bar" style="width: {{ tasks.progress }}%;"></div>
                                 <span class="progress-text">{{tasks.progress}}%</span>
                             </div>
+                        <td><a href="{% url 'assigntask'  tasks.id %}">assign task</a></td>
                         </td>
                         <td id="update-btn"><a href="{% url 'update'  tasks.id%}">Update</a></td>
                         <td id="dlt-btn"><a href="{% url 'delete'  tasks.id%}">Delete</a></td>

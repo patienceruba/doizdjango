@@ -10,6 +10,7 @@ urlpatterns = [
     path('userau', include('userAuthent.urls')),
     path('team', include('teams.urls')),
     path('chat', include('chat.urls')),
+    path("assigntask", include("assigntask.urls")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
