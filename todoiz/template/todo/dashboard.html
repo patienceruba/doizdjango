@@ -94,9 +94,12 @@
                 <div class="dashboard-item">
                     {% if teams %}
                     <a href="{% url 'teamMembership' %}">
-                    <h3>Team Members</h3>
+                    <h3>Teams</h3>
                     <p>{{teams}}</p>
                     </a>
+                    {% else %}
+                        <h3>Teams</h3>
+                        <p>0</p>
                     {% endif %}
                 </div>
                 <div class="dashboard-item">

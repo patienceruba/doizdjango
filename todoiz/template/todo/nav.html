@@ -16,11 +16,11 @@
         </form>
         <ul>
             <div class="notification-bell">
-                <span id="notification-count" class="badge">0</span>
+                <span class="material-symbols-outlined">notifications</span>
             </div>
-            <li>
+            <!--<li>
                 <p><small id="username-display"><a href="" id="uname">{{ user.username }}</a></small></p>
-            </li>
+            </li>-->
             <li>
                 {% if user.userprofile.profile_picture %}
                     <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" width="30" height="30">
